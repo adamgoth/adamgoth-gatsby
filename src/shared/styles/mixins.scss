@@ -1,0 +1,36 @@
+$breakpoints: (
+  sm: 600px,
+  md: 960px,
+  lg: 1200px,
+  xl: 1440px,
+);
+
+$allowed-breakpoint-targets: inspect(map-keys($breakpoints));
+
+@function get-breakpoint($target) {
+  $breakpoint: map-get($breakpoints, $target);
+
+  @if $breakpoint == null {
+    @warn ("You tried to respond_to '#{$target}'. Please use one of these available breakpoints - #{$allowed-breakpoint-targets}");
+  }
+
+  @return $breakpoint;
+}
+
+@mixin when-wider-than($target) {
+  @media screen and (min-width: get-breakpoint($target)) {
+    @content;
+  }
+}
+
+@mixin when-less-than($target) {
+  @media screen and (max-width: get-breakpoint($target) - 1px) {
+    @content;
+  }
+}
+
+@mixin when-on($target) {
+  @media screen and (min-width: get-breakpoint($target)) and (max-width: get-next-breakpoint($target) - 1) {
+    @content;
+  }
+}
