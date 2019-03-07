@@ -64,7 +64,7 @@ export default () => {
           <div className="Landing-social">
             <a
               className="Landing-icon"
-              href="#"
+              href="https://github.com/adamgoth"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -72,7 +72,7 @@ export default () => {
             </a>
             <a
               className="Landing-icon"
-              href="#"
+              href="https://www.linkedin.com/in/adam-goth-8a300163/"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -80,7 +80,7 @@ export default () => {
             </a>
             <a
               className="Landing-icon"
-              href="#"
+              href="https://twitter.com/init_adam"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -88,7 +88,7 @@ export default () => {
             </a>
             <a
               className="Landing-icon"
-              href="#"
+              href="https://www.instagram.com/adampeter"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -96,7 +96,7 @@ export default () => {
             </a>
             <a
               className="Landing-icon"
-              href="#"
+              href="mailto://adamgoth@gmail.com"
               rel="noopener noreferrer"
               target="_blank"
             >
