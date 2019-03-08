@@ -57,6 +57,8 @@ export default () => {
         <div className="Landing">
           <Img
             className="Landing-image"
+            critical={true}
+            fadeIn={false}
             fixed={data.me.childImageSharp.fixed}
           />
           <h1 className="Landing-name">@adamgoth</h1>
