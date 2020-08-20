@@ -1,0 +1,15 @@
+.blog {
+  &__list-item {
+    list-style-type: none;
+  }
+
+  &__link {
+    text-decoration: none;
+    color: black;
+    &:hover {
+      .blog__read-more {
+        text-decoration: underline;
+      }
+    }
+  }
+}

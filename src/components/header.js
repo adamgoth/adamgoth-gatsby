@@ -1,28 +1,18 @@
 import React from "react"
-import Helmet from "react-helmet"
+import { Link } from "gatsby"
+
+import "./header.scss"
 
 const Header = () => (
-  <header>
-    <Helmet>
-      <script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=UA-175558248-1"
-      ></script>
-      <script>
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'UA-175558248-1');
-        `}
-      </script>
-
-      <link
-        href="https://fonts.googleapis.com/css?family=Muli"
-        rel="stylesheet"
-      />
-    </Helmet>
+  <header className="header">
+    <div>
+      <Link className="header__link" to="/blog">
+        Blog
+      </Link>
+      <Link className="header__link" to="/">
+        Contact
+      </Link>
+    </div>
   </header>
 )
 
