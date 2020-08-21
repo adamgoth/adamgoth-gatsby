@@ -9,7 +9,21 @@
     text-decoration: none;
 
     &:hover {
-      font-weight: bold;
+      font-weight: 900;
+    }
+  }
+
+  &__nav-links {
+    margin-right: 0;
+  }
+
+  &__home-link {
+    margin-left: 0;
+    margin-right: auto;
+    font-size: 1.2rem;
+
+    &:hover {
+      font-weight: 900;
     }
   }
 }

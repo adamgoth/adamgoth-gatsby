@@ -4,11 +4,11 @@ import Layout from "../components/layout"
 
 import "./blog.scss"
 
-const BlogIndex = ({ data }) => {
+const BlogIndex = ({ data, location }) => {
   const { edges: posts } = data.allMdx
 
   return (
-    <Layout>
+    <Layout location={location}>
       <ul>
         {posts.map(({ node: post }) => (
           <li className="blog__list-item" key={post.id}>

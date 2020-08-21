@@ -13,7 +13,7 @@ import Footer from "./footer"
 
 import "../shared/styles/base.scss"
 
-const Layout = ({ children }) => (
+const Layout = ({ children, location }) => (
   <React.Fragment>
     <Helmet>
       <script
@@ -35,7 +35,7 @@ const Layout = ({ children }) => (
         rel="stylesheet"
       />
     </Helmet>
-    <Header />
+    <Header location={location} />
     <main>{children}</main>
     <Footer />
   </React.Fragment>
