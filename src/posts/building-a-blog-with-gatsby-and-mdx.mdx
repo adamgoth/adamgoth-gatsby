@@ -1,0 +1,152 @@
+---
+title: Building a blog with Gatsby and MDX
+slug: building-a-blog-with-gatsby-and-mdx
+date: "2020-08-20"
+author: Adam Goth
+preview: I've long considered trying out blogging. I'm finally giving it a go.
+categories:
+  - building
+  - blogging
+keywords:
+  - javascript
+  - gatsby
+  - web development
+  - mdx
+---
+
+I've long considered trying out blogging. I'm finally giving it a go.
+
+My first post is going to be about how I built this very blog using Gatsby and
+MDX. For background context, I built my personal site that you are currently on
+about two years ago using Gatsby. Given that it is essentially just a single
+landing page with links, using Gatsby wasn't entirely necessary, but I had been
+looking for an excuse to try it out. Fast forward two years, I've decided to
+make further use of Gatsby add on the site by building out a blog.
+
+The basic idea is to use
+[gatsby-source-filesystem](https://www.gatsbyjs.com/plugins/gatsby-source-filesystem/)
+and [gatsby-plugin-mdx](https://www.gatsbyjs.com/plugins/gatsby-plugin-mdx/)
+along with the
+[createPages](https://www.gatsbyjs.com/docs/node-apis/#createPages) Gatsby Node
+API to dynamically generate blog pages from MDX files in our project. How does
+this work? Let's jump in.
+
+_Note: This blog post will assume basic Gatsby knowledge. If you are unfamiliar,
+there is a [great tutorial series](https://www.gatsbyjs.com/tutorial/) available
+on Gatsby's site to get you up to speed._
+
+Our first requirement is the
+[gatsby-source-filesystem](https://www.gatsbyjs.com/plugins/gatsby-source-filesystem/)
+plugin. What this plugin allows us to do is to use our projects filesystem as a
+source for data to use in our application. This is how we are eventually going
+to be able to query our project for MDX files and convert them into blog page
+content.
+
+Our second requirement is going to be the
+[gatsby-plugin-mdx](https://www.gatsbyjs.com/plugins/gatsby-plugin-mdx/). This
+is the official integration for using MDX within Gatsby. If you are unfamiliar
+with MDX, it is essentially a file format that allows you to combine standard
+[Markdown](https://guides.github.com/features/mastering-markdown/) with
+[JSX](https://reactjs.org/docs/introducing-jsx.html). I won't go into much
+detail but it is pretty neat, especially if you are a React developer and are
+used to writing JSX. You can read more about [MDX](https://mdxjs.com/) here.
+
+After installing both plugins, we can configure them in our `gatsby-config.js`
+file as follows.
+
+```javascript
+module.exports = {
+  ...,
+  plugins: [
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `posts`,
+        path: `${__dirname}/src/posts/`,
+      },
+    },
+    `gatsby-plugin-mdx`,
+  ],
+}
+```
+
+The `path` value here is `src/posts/` which is where I will store my MDX files.
+This configuration will tell Gatsby to query this particular directory for data.
+
+Now that we have our plugins configured, our project is ready to query for MDX
+files and turn them into blog pages. But just how do we tell it to do that?
+
+The answer is Gatsby's
+[createPages](https://www.gatsbyjs.com/docs/node-apis/#createPages) API. If you
+are familiar with Gatsby, you know that by default, Gatsby core creates pages
+for any React files that it finds in the `src/pages/` directory. In a similar
+fashion, this API allows us to instruct Gatsby to create additional pages based
+on the criteria we specify. When all is said and done, our `gatsby-node.js` file
+(located in the project's root directory) will look as follows:
+
+```javascript
+const path = require("path")
+
+exports.createPages = async ({ graphql, actions, reporter }) => {
+  // destructure the createPage function from the actions object
+  const { createPage } = actions
+
+  const result = await graphql(`
+    query {
+      allMdx {
+        edges {
+          node {
+            id
+            frontmatter {
+              slug
+            }
+          }
+        }
+      }
+    }
+  `)
+
+  if (result.errors) {
+    reporter.panicOnBuild('🚨  ERROR: Loading "createPages" query')
+  }
+
+  // create blog post pages
+  const posts = result.data.allMdx.edges
+
+  // call `createPage` for each result
+  posts.forEach(({ node }, index) => {
+    createPage({
+      path: node.frontmatter.slug,
+      component: path.resolve(`./src/components/posts-page-layout.js`),
+      // you can use the values in this context in
+      // our page layout component
+      context: { id: node.id },
+    })
+  })
+}
+```
+
+We first query our filesystem for MDX files. These will be located in the
+directory we specified in our earlier configuration. Each node in our query
+results is an MDX file that was found.
+
+For each file, we then call `createPages` passing it a `path` value which will
+serve as our URL, a `component` value which will be used as our page layout, and
+a `context` object which can hold additional data to be made available to us
+within our layout component.
+
+Within each file result, we have something called `frontmatter`.
+[Frontmatter](https://www.gatsbyjs.com/docs/adding-markdown-pages/#frontmatter-for-metadata-in-markdown-files)
+is a set of key value pairs that can be used to provide additional data about
+the file. In our case, we're going to use frontmatter for storing information
+about the blog, including details such as our posts title, slug, date, author,
+and more. Frontmatter is denoted in a Markdown file by three dashes at the start
+and end of a block, as such:
+
+```markdown
+---
+title: Building a blog with Gatsby and MDX
+slug: building-a-blog-with-gatsby-and-mdx
+author: Adam Goth
+---
+```
