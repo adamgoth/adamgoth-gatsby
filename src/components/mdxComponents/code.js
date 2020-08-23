@@ -18,6 +18,7 @@ export default ({ children }) => {
             padding: "20px",
             margin: "40px auto",
             borderRadius: "5px",
+            overflow: "scroll",
           }}
         >
           {tokens.map((line, i) => (

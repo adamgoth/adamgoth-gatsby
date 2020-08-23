@@ -7,15 +7,16 @@ import components from "./mdxComponents"
 
 import "./posts-page-layout.scss"
 
-export default function PageTemplate({ data: { mdx } }) {
-  console.log(components)
+export default function PageTemplate({ data, data: { mdx } }) {
   return (
     <Layout>
-      <h1>{mdx.frontmatter.title}</h1>
-      <h4 className="template__post-info">{`${mdx.frontmatter.date} by ${mdx.frontmatter.author}`}</h4>
-      <MDXProvider components={components}>
-        <MDXRenderer>{mdx.body}</MDXRenderer>
-      </MDXProvider>
+      <div className="template">
+        <h1>{mdx.frontmatter.title}</h1>
+        <h4 className="template__post-info">{`${mdx.frontmatter.date} by ${mdx.frontmatter.author}`}</h4>
+        <MDXProvider components={components}>
+          <MDXRenderer>{mdx.body}</MDXRenderer>
+        </MDXProvider>
+      </div>
     </Layout>
   )
 }

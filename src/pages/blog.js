@@ -9,7 +9,7 @@ const BlogIndex = ({ data, location }) => {
 
   return (
     <Layout location={location}>
-      <ul>
+      <ul className="blog__list">
         {posts.map(({ node: post }) => (
           <li className="blog__list-item" key={post.id}>
             <Link className="blog__link" to={`/${post.frontmatter.slug}`}>
