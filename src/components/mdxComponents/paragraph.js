@@ -1,5 +1,7 @@
 import React from "react"
 
-import "./paragraph.scss"
-
-export default ({ children }) => <p className="paragraph">{children}</p>
+export default ({ children }) => (
+  <p style={{ lineHeight: "1.7", maxWidth: "750px", margin: "30px auto" }}>
+    {children}
+  </p>
+)

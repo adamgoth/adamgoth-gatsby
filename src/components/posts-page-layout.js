@@ -5,14 +5,17 @@ import { MDXRenderer } from "gatsby-plugin-mdx"
 import Layout from "../components/layout"
 import components from "./mdxComponents"
 
-import "./posts-page-layout.scss"
-
-export default function PageTemplate({ data, data: { mdx } }) {
+export default function PageTemplate({ data: { mdx } }) {
   return (
     <Layout>
-      <div className="template">
+      <div style={{ marginBottom: "10rem" }}>
         <h1>{mdx.frontmatter.title}</h1>
-        <h4 className="template__post-info">{`${mdx.frontmatter.date} by ${mdx.frontmatter.author}`}</h4>
+        <h4
+          style={{
+            color: "gray",
+            fontWeight: "normal",
+          }}
+        >{`${mdx.frontmatter.date} by ${mdx.frontmatter.author}`}</h4>
         <MDXProvider components={components}>
           <MDXRenderer>{mdx.body}</MDXRenderer>
         </MDXProvider>

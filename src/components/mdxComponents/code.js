@@ -1,13 +1,14 @@
 import React from "react"
 import Highlight, { defaultProps } from "prism-react-renderer"
-import nightOwl from "prism-react-renderer/themes/nightOwl"
+import vsDark from "prism-react-renderer/themes/vsDark"
+import { Line, LineContent, LineNumber } from "./lines"
 
 export default ({ children }) => {
   return (
     <Highlight
       {...defaultProps}
       code={children}
-      theme={nightOwl}
+      theme={vsDark}
       language="javascript"
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
@@ -16,17 +17,21 @@ export default ({ children }) => {
           style={{
             ...style,
             padding: "20px",
-            margin: "40px auto",
+            margin: "40px 0",
             borderRadius: "5px",
             overflow: "scroll",
+            lineHeight: "1.4",
           }}
         >
           {tokens.map((line, i) => (
-            <div key={i} {...getLineProps({ line, key: i })}>
-              {line.map((token, key) => (
-                <span key={key} {...getTokenProps({ token, key })} />
-              ))}
-            </div>
+            <Line key={i} {...getLineProps({ line, key: i })}>
+              <LineNumber>{i + 1}</LineNumber>
+              <LineContent>
+                {line.map((token, key) => (
+                  <span key={key} {...getTokenProps({ token, key })} />
+                ))}
+              </LineContent>
+            </Line>
           ))}
         </pre>
       )}
