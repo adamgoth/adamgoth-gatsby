@@ -8,7 +8,7 @@ import components from "./mdxComponents"
 export default function PageTemplate({ data: { mdx } }) {
   return (
     <Layout>
-      <div style={{ marginBottom: "10rem" }}>
+      <div style={{ padding: "0 1rem", marginBottom: "10rem" }}>
         <h1>{mdx.frontmatter.title}</h1>
         <h4
           style={{

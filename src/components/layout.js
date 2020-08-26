@@ -14,7 +14,7 @@ import Footer from "./footer"
 import "../shared/styles/base.scss"
 
 const Layout = ({ children, location }) => (
-  <React.Fragment>
+  <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
     <Helmet>
       <script
         async
@@ -38,7 +38,7 @@ const Layout = ({ children, location }) => (
     <Header location={location} />
     <main>{children}</main>
     <Footer />
-  </React.Fragment>
+  </div>
 )
 
 export default Layout
