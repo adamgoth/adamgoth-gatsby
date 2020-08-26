@@ -1,0 +1,19 @@
+.template {
+  &__post-info {
+    color: gray;
+    font-weight: normal;
+  }
+
+  &__link {
+    margin: 4rem 0 6rem 0;
+    display: block;
+    padding: 0 1rem;
+    font-weight: 900;
+    text-decoration: none;
+    color: black;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

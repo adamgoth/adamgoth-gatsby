@@ -1,25 +1,25 @@
 import React from "react"
-import { graphql } from "gatsby"
+import { Link, graphql } from "gatsby"
 import { MDXProvider } from "@mdx-js/react"
 import { MDXRenderer } from "gatsby-plugin-mdx"
 import Layout from "../components/layout"
 import components from "./mdxComponents"
 
+import "./posts-page-layout.scss"
+
 export default function PageTemplate({ data: { mdx } }) {
   return (
     <Layout>
-      <div style={{ padding: "0 1rem", marginBottom: "10rem" }}>
+      <div style={{ padding: "0 1rem" }}>
         <h1>{mdx.frontmatter.title}</h1>
-        <h4
-          style={{
-            color: "gray",
-            fontWeight: "normal",
-          }}
-        >{`${mdx.frontmatter.date} by ${mdx.frontmatter.author}`}</h4>
+        <h4 className="template__post-info">{`${mdx.frontmatter.date} by ${mdx.frontmatter.author}`}</h4>
         <MDXProvider components={components}>
           <MDXRenderer>{mdx.body}</MDXRenderer>
         </MDXProvider>
       </div>
+      <Link className="template__link" to={`/blog`} style={{}}>
+        ← Back to posts
+      </Link>
     </Layout>
   )
 }
