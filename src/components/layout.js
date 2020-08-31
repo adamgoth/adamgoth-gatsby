@@ -34,10 +34,6 @@ const Layout = ({ children, location }) => (
         href="https://fonts.googleapis.com/css?family=Muli"
         rel="stylesheet"
       />
-      <meta
-        name="twitter:image"
-        content={`https://pbs.twimg.com/profile_images/1227765372608057344/daNn331w_400x400.jpg`}
-      />
     </Helmet>
     <Header location={location} />
     <main>{children}</main>
