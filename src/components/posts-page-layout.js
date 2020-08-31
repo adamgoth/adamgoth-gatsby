@@ -15,10 +15,10 @@ export default function PageTemplate({ data: { mdx } }) {
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={mdx.frontmatter.title} />
         <meta name="twitter:description" content={mdx.frontmatter.preview} />
-        <meta
+        {/* <meta
           name="twitter:image"
           content={`https://pbs.twimg.com/profile_images/1227765372608057344/daNn331w_400x400.jpg`}
-        />
+        /> */}
       </Helmet>
       <Layout>
         <div style={{ padding: "0 1rem" }}>
