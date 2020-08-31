@@ -17,10 +17,6 @@ export default function PageTemplate({ data: { mdx } }) {
         <meta name="twitter:description" content={mdx.frontmatter.preview} />
         <meta
           name="twitter:image"
-          content={`https://avatars3.githubusercontent.com/u/5225766?s=460&u=a704b55e7304534681cf1377bcadede362b25daa&v=4`}
-        />
-        <meta
-          name="twitter:image"
           content={`https://pbs.twimg.com/profile_images/1227765372608057344/daNn331w_400x400.jpg`}
         />
       </Helmet>
