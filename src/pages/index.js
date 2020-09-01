@@ -7,7 +7,14 @@ const IndexPage = ({ location }) => (
   <Layout location={location}>
     <SEO
       title="adamgoth.com"
-      keywords={[`developer`, `portfolio`, `denver`, `web development`]}
+      keywords={[
+        `javascript`,
+        `react`,
+        `developer`,
+        `portfolio`,
+        `denver`,
+        `web development`,
+      ]}
     />
     <Landing />
   </Layout>

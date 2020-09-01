@@ -4,6 +4,7 @@ import Helmet from "react-helmet"
 import { MDXProvider } from "@mdx-js/react"
 import { MDXRenderer } from "gatsby-plugin-mdx"
 import Layout from "../components/layout"
+import SEO from "../components/seo"
 import components from "./mdxComponents"
 
 import "./posts-page-layout.scss"
@@ -11,6 +12,7 @@ import "./posts-page-layout.scss"
 export default function PageTemplate({ data: { mdx } }) {
   return (
     <>
+      <SEO keywords={mdx.frontmatter.keywords} />
       <Helmet>
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={mdx.frontmatter.title} />
@@ -46,6 +48,7 @@ export const pageQuery = graphql`
         date
         author
         preview
+        keywords
       }
     }
   }
