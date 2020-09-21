@@ -1,0 +1,230 @@
+---
+title: Comparing Enzyme with React Testing Library
+slug: comparing-enzyme-and-react-testing-library
+date: "2020-09-28"
+author: Adam Goth
+preview:
+  Enzyme has long been a popular library for testing React applications. More
+  recently, React Testing Library has been gaining popularity in Enzyme's place.
+  In this post, we'll take a look at how the two compare.
+categories:
+  - testing
+keywords:
+  - javascript
+  - react
+  - web development
+  - testing
+  - react testing library
+  - enzyme
+---
+
+Enzyme has long been a popular library for testing React applications. More
+recently, React Testing Library has been gaining popularity in Enzyme's place.
+In this post, we'll take a look at how the two compare.
+
+### Overview
+
+Enzyme is a JavaScript Testing utility for React that makes it easier to assert,
+manipulate, and traverse your React Components’ output. It was created by AirBnB
+and released in 2015. When using Enzyme, it is common to mount the React
+component that you are testing and then test the component based on certain
+props or state that are passed, or by calling functions contained within the
+component.
+
+While Enzyme tests typically focus on components working correctly interally,
+React Testing Library is more focused on testing the React application as it is
+experienced by the user. Tests tend to be more focused on the state of the DOM
+after imitating user behavior rather than the state of a particular component or
+implementation.
+
+In order to get a better understanding of this, let's look at some code.
+
+### Setting up
+
+In order to compare these two testing libraries, I've created two separate
+repos. Both projects contain the same exact application (a to-do list, of
+course). The only difference is in the testing. Both repos are available on
+GitHub.
+
+[Repo for testing with Enzyme](https://github.com/adamgoth/testing-with-enzyme)
+
+[Repo for testing with React Testing Library](https://github.com/adamgoth/testing-with-react-testing-library)
+
+The file we're going to focus on in both repos is `src/components/ToDo.test.js`.
+
+Below is the test for our application, written in the typical style of Enzyme.
+
+```javascript
+// testing-with-enzyme/src/components/ToDo.test.js
+
+import React from "react"
+import { mount } from "enzyme"
+import ToDo from "./ToDo"
+
+describe("<ToDo/>", () => {
+  const app = mount(<ToDo />)
+
+  it("Renders without crashing", () => {
+    expect(app.length).toEqual(1)
+  })
+
+  describe("The default UI", () => {
+    it("Renders two default todo items", () => {
+      expect(app.find(".ToDoItem").length).toBe(2)
+    })
+
+    it("Has an input field", () => {
+      expect(app.find(".ToDoInput").length).toEqual(1)
+    })
+
+    it("Has an add button", () => {
+      expect(app.find(".ToDo-Add").length).toEqual(1)
+    })
+  })
+
+  describe("Adding items", () => {
+    afterAll(() => {
+      app.find(".ToDoItem-Delete").simulate("click")
+    })
+
+    window.alert = jest.fn()
+    it("When the add button is pressed, if the input field is empty, prevent item from being added", () => {
+      app.find(".ToDo-Add").simulate("click")
+      expect(app.find(".ToDoItem").length).toBe(2)
+    })
+
+    it("When the add button is pressed, if the input field is empty, prevent item from being added", () => {
+      app.find(".ToDo-Add").simulate("click")
+      expect(window.alert).toHaveBeenCalled()
+    })
+
+    it("When the add button is pressed, if the input field has text, it creates a new todo item", () => {
+      const event = { target: { value: "Create more tests" } }
+      app.find("input").simulate("change", event)
+      app.find(".ToDo-Add").simulate("click")
+
+      expect(
+        app
+          .find(".ToDoItem-Text")
+          .at(2)
+          .text()
+      ).toEqual("Create more tests")
+    })
+  })
+
+  describe("Deleting items", () => {
+    it("When the delete button is pressed for the first todo item, it removes the entire item", () => {
+      app
+        .find(".ToDoItem-Delete")
+        .first()
+        .simulate("click")
+
+      expect(app.find(".ToDoItem").length).toBe(2)
+    })
+    it("means that because the first toDoItem was deleted, the first toDoItem should now be buy milk", () => {
+      expect(
+        app
+          .find(".ToDoItem-Text")
+          .first()
+          .text()
+      ).toEqual("buy milk")
+    })
+  })
+})
+```
+
+And then, the same tests, written with React Testing Library.
+
+```javascript
+// testing-with-react-testing-library/src/components/ToDo.test.js
+
+import React from "react"
+import { mount } from "enzyme"
+import ToDo from "./ToDo"
+
+describe("<ToDo/>", () => {
+  const app = mount(<ToDo />)
+
+  it("Renders without crashing", () => {
+    expect(app.length).toEqual(1)
+  })
+
+  describe("The default UI", () => {
+    it("Renders two default todo items", () => {
+      expect(app.find(".ToDoItem").length).toBe(2)
+    })
+
+    it("Has an input field", () => {
+      expect(app.find(".ToDoInput").length).toEqual(1)
+    })
+
+    it("Has an add button", () => {
+      expect(app.find(".ToDo-Add").length).toEqual(1)
+    })
+  })
+
+  describe("Adding items", () => {
+    afterAll(() => {
+      app.find(".ToDoItem-Delete").simulate("click")
+    })
+
+    window.alert = jest.fn()
+    it("When the add button is pressed, if the input field is empty, prevent item from being added", () => {
+      app.find(".ToDo-Add").simulate("click")
+      expect(app.find(".ToDoItem").length).toBe(2)
+    })
+
+    it("When the add button is pressed, if the input field is empty, prevent item from being added", () => {
+      app.find(".ToDo-Add").simulate("click")
+      expect(window.alert).toHaveBeenCalled()
+    })
+
+    it("When the add button is pressed, if the input field has text, it creates a new todo item", () => {
+      const event = { target: { value: "Create more tests" } }
+      app.find("input").simulate("change", event)
+      app.find(".ToDo-Add").simulate("click")
+
+      expect(
+        app
+          .find(".ToDoItem-Text")
+          .at(2)
+          .text()
+      ).toEqual("Create more tests")
+    })
+  })
+
+  describe("Deleting items", () => {
+    it("When the delete button is pressed for the first todo item, it removes the entire item", () => {
+      app
+        .find(".ToDoItem-Delete")
+        .first()
+        .simulate("click")
+
+      expect(app.find(".ToDoItem").length).toBe(2)
+    })
+    it("means that because the first toDoItem was deleted, the first toDoItem should now be buy milk", () => {
+      expect(
+        app
+          .find(".ToDoItem-Text")
+          .first()
+          .text()
+      ).toEqual("buy milk")
+    })
+  })
+})
+```
+
+### Wrapping up
+
+...
+
+If you enjoyed this post or found it useful, please consider
+[sharing it on Twitter](https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.adamgoth.com%2Fbuilding-a-blog-with-gatsby-and-mdx).
+
+If you want to stay updated on new posts,
+[follow me on Twitter](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fpublish.twitter.com%2F%3FbuttonType%3DFollowButton%26query%3Dhttps%253A%252F%252Ftwitter.com%252Finit_adam%26widget%3DButton&ref_src=twsrc%5Etfw&region=follow_link&screen_name=init_adam&tw_p=followbutton)
+
+If you have any questions, comments, or just want to say hello,
+[send me a message](https://twitter.com/messages/compose?recipient_id=33618361).
+
+Thanks for reading!
