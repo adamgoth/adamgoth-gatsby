@@ -1,12 +1,16 @@
 import React from "react"
+import Blockquote from "./blockquote"
 import Code from "./code"
-import InlineCode from "./inlineCode"
-import Paragraph from "./paragraph"
 import ExternalLink from "./externalLink"
+import InlineCode from "./inlineCode"
+import ListItem from "./listitem"
+import Paragraph from "./paragraph"
 
 export default {
-  code: props => <Code {...props} />,
-  p: props => <Paragraph {...props} />,
-  inlineCode: props => <InlineCode {...props} />,
   a: props => <ExternalLink {...props} />,
+  blockquote: props => <Blockquote {...props} />,
+  code: props => <Code {...props} />,
+  inlineCode: props => <InlineCode {...props} />,
+  li: props => <ListItem {...props} />,
+  p: props => <Paragraph {...props} />,
 }

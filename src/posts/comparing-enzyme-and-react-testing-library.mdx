@@ -1,0 +1,360 @@
+---
+title: Comparing Enzyme with React Testing Library
+slug: comparing-enzyme-and-react-testing-library
+date: "2020-09-21"
+author: Adam Goth
+preview:
+  Enzyme has long been a popular library for testing React applications. More
+  recently, React Testing Library has been gaining popularity in Enzyme's place.
+  In this post, we'll take a look at how the two compare.
+categories:
+  - testing
+keywords:
+  - javascript
+  - react
+  - web development
+  - testing
+  - react testing library
+  - enzyme
+---
+
+Enzyme has long been a popular library for testing React applications. More
+recently, React Testing Library has been gaining traction in Enzyme's place. In
+this post, we'll take a look at how the two compare.
+
+### Overview
+
+Enzyme is a JavaScript Testing utility for React that makes it easier to assert,
+manipulate, and traverse your React Components’ output. It was created by AirBnB
+and released in 2015. When using Enzyme, it is common to render the React
+component that you are testing and then test the component based on certain
+props or state that are passed, or by calling functions contained within the
+component.
+
+While Enzyme tests typically focus on components working correctly interally,
+React Testing Library is more focused on testing the React application as it is
+experienced by the user. Tests tend to be more focused on the state of the DOM
+after imitating user behavior rather than the state of a particular component or
+implementation.
+
+In order to get a better understanding of this, let's look at some code.
+
+### Setting up
+
+In order to compare these two testing libraries, I've created two separate
+repos. Both projects contain the same exact application (a to-do list, of
+course). The only difference is that one test file is written using Enzyme and
+the other is written using React Testing Library. You can easily follow along in
+this post without running the application, but if you are interested, both repos
+are available on GitHub.
+
+[Repo for testing with Enzyme](https://github.com/adamgoth/testing-with-enzyme)
+
+[Repo for testing with React Testing Library](https://github.com/adamgoth/testing-with-react-testing-library)
+
+The file we're going to focus on in both repos is `src/components/ToDo.test.js`.
+
+Below is our testing file written in the typical style of Enzyme.
+
+```javascript
+// testing-with-enzyme/src/components/ToDo.test.js
+
+import React from "react"
+import { mount } from "enzyme"
+import ToDo from "./ToDo"
+
+const setup = () => mount(<ToDo />)
+
+describe("<ToDo/>", () => {
+  describe("The default UI", () => {
+    it("Renders two default todo items", () => {
+      const app = setup()
+      expect(app.find(".ToDoItem").length).toBe(2)
+    })
+
+    it("Has an input field", () => {
+      const app = setup()
+      expect(app.find(".ToDoInput").length).toEqual(1)
+    })
+
+    it("Has an add button", () => {
+      const app = setup()
+      expect(app.find(".ToDo-Add").length).toEqual(1)
+    })
+  })
+
+  describe("Adding items", () => {
+    window.alert = jest.fn()
+    it("When the add button is pressed, if the input field is empty, prevent item from being added", () => {
+      const app = setup()
+      app.find(".ToDo-Add").simulate("click")
+      expect(app.find(".ToDoItem").length).toBe(2)
+    })
+
+    it("When the add button is pressed, if the input field is empty, prevent item from being added", () => {
+      const app = setup()
+      app.find(".ToDo-Add").simulate("click")
+      expect(window.alert).toHaveBeenCalled()
+    })
+
+    it("When the add button is pressed, if the input field has text, it creates a new todo item", () => {
+      const app = setup()
+      const event = { target: { value: "Create more tests" } }
+      app.find("input").simulate("change", event)
+      app.find(".ToDo-Add").simulate("click")
+      expect(
+        app
+          .find(".ToDoItem-Text")
+          .at(2)
+          .text()
+      ).toEqual("Create more tests")
+    })
+  })
+
+  describe("Deleting items", () => {
+    it("When the delete button is pressed for the first todo item, it removes the entire item", () => {
+      const app = setup()
+      app
+        .find(".ToDoItem-Delete")
+        .first()
+        .simulate("click")
+      expect(app.find(".ToDoItem").length).toBe(1)
+    })
+  })
+})
+```
+
+And then, the same tests, written with React Testing Library.
+
+```javascript
+// testing-with-react-testing-library/src/components/ToDo.test.js
+
+import React from "react"
+import { render } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
+import ToDo from "./ToDo"
+
+const setup = () => render(<ToDo />)
+
+describe("<ToDo/>", () => {
+  describe("The default UI", () => {
+    it("Renders two default todo items", () => {
+      const { getAllByRole } = setup()
+      expect(getAllByRole("listitem").length).toBe(2)
+    })
+
+    it("Has an input field", () => {
+      const { getByRole } = setup()
+      expect(getByRole("textbox")).toBeInTheDocument()
+    })
+
+    it("Has an add button", () => {
+      const { getByLabelText } = setup()
+      expect(getByLabelText("add")).toBeInTheDocument()
+    })
+  })
+
+  describe("Adding items", () => {
+    it("When the add button is pressed, if the input field is empty, prevent item from being added", () => {
+      const { getByLabelText } = setup()
+      window.alert = jest.fn()
+      userEvent.click(getByLabelText("add"))
+      expect(window.alert).toHaveBeenCalled()
+    })
+
+    it("When the add button is pressed, if the input field has text, it creates a new todo item", async () => {
+      const { getByRole, getByLabelText, getByText } = setup()
+      const toDoItem = "fake item"
+      userEvent.type(getByRole("textbox"), toDoItem)
+      userEvent.click(getByLabelText("add"))
+      const item = await getByText(toDoItem)
+      expect(item).toBeInTheDocument()
+    })
+  })
+
+  describe("Deleting items", () => {
+    it("When the delete button is pressed for the first todo item, it removes the entire item", async () => {
+      const { getAllByRole, getByLabelText, queryByText } = setup()
+      // default item
+      const toDoItem = "clean the house"
+      userEvent.click(getByLabelText(`delete ${toDoItem}`))
+      const item = await queryByText(toDoItem)
+      expect(item).toBeNull()
+      // should only be 1 item left
+      expect(getAllByRole("listitem").length).toBe(1)
+    })
+  })
+})
+```
+
+Both files test for the following:
+
+- Renders two default todo items
+- Has an input field
+- Has an add button
+- When the add button is pressed, if the input field is empty, prevent item from
+  being added
+- When the add button is pressed, if the input field has text, it creates a new
+  todo item
+- When the delete button is pressed for the first todo item, it removes the
+  entire item
+
+Because we are using Enzyme's `mount` function, the components in both tests are
+rendered in a similar fashion, with an instance of the component being created
+and then attached to the actual DOM. This would not be true if we had used
+another popular Enzyme function, `shallow` to render our component. This post
+does not focus on that difference, but you can read more about the difference
+[here](https://gist.github.com/fokusferit/e4558d384e4e9cab95d04e5f35d4f913).
+
+The first significant way in that the tests start to differ is when we go to
+search for a particlar element in the DOM to assert its existance or its state.
+Typically in an Enzyme test, you'll see elements searched for by their
+classname, as follows:
+
+```javascript
+it("Renders two default todo items", () => {
+  const app = setup()
+  expect(app.find(".ToDoItem").length).toBe(2)
+})
+```
+
+When writing the same test using React Testing Library, you'll notice that we
+instead use a method called `getAllByRole`, and pass it an
+[ARIA role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques)
+of `listitem`.
+
+```javascript
+it("Renders two default todo items", () => {
+  const { getAllByRole } = setup()
+  expect(getAllByRole("listitem").length).toBe(2)
+})
+```
+
+So why is one better than the other? While classnames are rather abitrary, ARIA
+roles are not. ARIA roles provide additional context to elements for accessility
+purposes. In the future, as developers, we may go and update our classname. We
+may tweak the name, we may change the style, we may entirely change how we wrote
+our CSS. If that happens, all of the sudden our test breaks. But the application
+has not broken. By querying by an element's role rather than its classname, we
+can ensure that we are testing the application by looking for elements in the
+same manner that a user with assistive technology may be looking at the
+application. We look for elements based on the purpose they convey to our users.
+
+This concept is discussed in the React Testing Library docs,
+[Which query should I use?](https://testing-library.com/docs/guide-which-query),
+which provides recommendations for the order of priority in which you should
+query for elements. For example, if we can't find an element by its role, our
+next best bet is to look for a label. Why? Well, that's most likely what our
+users would do to find a certain part of the application. This highlights
+[React Testing Library's guiding principles](https://testing-library.com/docs/guiding-principles).
+
+> The more your tests resemble the way your software is used, the more
+> confidence they can give you.
+
+The library is written to provide methods and utlities that encourage you to
+tests that closely resemble how your web pages are used. It purposely drives the
+user towards accessbility and away from testing implementation details.
+
+Let's move on to another example and take a look at the difference in how we
+test that our application successfully creates a new item in the to-do list.
+
+With Enzyme, it's common to manually create DOM events and then pass them to
+Enzyme's `simulate` function, telling it to simulate the `change` event with
+this event data that we've created. Below is an example of this.
+
+```javascript
+// testing-with-enzyme/src/components/ToDo.test.js
+
+it("When the add button is pressed, if the input field has text, it creates a new todo item", () => {
+  const app = setup()
+  const event = { target: { value: "Create more tests" } }
+  app.find("input").simulate("change", event)
+  app.find(".ToDo-Add").simulate("click")
+  expect(
+    app
+      .find(".ToDoItem-Text")
+      .at(2)
+      .text()
+  ).toEqual("Create more tests")
+})
+```
+
+While this does what we'd expect to, it doesn't test the application in the same
+manner the user would use it. There is a lot of API and implementation
+information we need to know in order for the test to work. We need to know what
+the event should look like. We need to know which event API to simulate. We need
+to know the classname of the element we want to click. We need to know the
+classname of the new list item to look for is. And lastly, we need to know what
+order the element should be in so we can compare the text. None of these things
+are things the user actually knows or cares about. All they know is that when
+they type in the box and then click the add button, a new item is added to the
+list.
+
+In order to get away from testing our code implementation and get closer to
+testing how the application is actually used, we turn once again to React
+Testing Library. Instead of creating fake DOM event objects and simulating
+various change events, we have the ability to mimic how users would actually
+interact with the application using `userEvent`'s, which are provided by the
+[user-event](https://github.com/testing-library/user-event) library.
+
+> user-event tries to simulate the real events that would happen in the browser
+> as the user interacts with it. For example userEvent.click(checkbox) would
+> change the state of the checkbox.
+
+Using this, the same test written in React Testing Library looks as follows:
+
+```javascript
+// testing-with-react-testing-library/src/components/ToDo.test.js
+
+it("When the add button is pressed, if the input field has text, it creates a new todo item", async () => {
+  const { getByRole, getByLabelText, getByText } = setup()
+  const toDoItem = "fake item"
+  userEvent.type(getByRole("textbox"), toDoItem)
+  userEvent.click(getByLabelText("add"))
+  const item = await getByText(toDoItem)
+  expect(item).toBeInTheDocument()
+})
+```
+
+In contrast to the Enzyme test, to write the React Testing Library test, we
+don't need to know much more than what the user would now. We first look for an
+element with the role of `textbox`, we then simulate the user typing by using
+`userEvent.type`, we simuluate the user clicking with `userEvent.click` on the
+element with the accessbility label of `add`. We then assert that the text we
+typed in is appearing in the document.
+
+In addition to being a much closer representation of the user's experience with
+the application, writing this test this way also makes for a much less brittle
+test. We could update classnames or change the number of items in the list and
+the test would still pass, because the application would still be working. The
+same can not be said for the first test written in Enzyme.
+
+### Wrapping up
+
+These examples are shown to attempt to highlight some of the benefits that React
+Testing Library offers and how it differs from the more traditional testing
+library of Enzyme. Everything React Testing Library offers always comes back to
+its guiding principle.
+
+> The more your tests resemble the way your software is used, the more
+> confidence they can give you.
+
+We've all been there before when a little tiny change to a component causes a
+test to break without actually breaking any functionality. React Testing
+Library, used properly, guides us away from writing these types of implentation
+tests and towards writing robust tests and more accessbile code.
+
+This post is intended as a high-level introduction to the library. It only
+scratches the surface of all the library has to offer. To learn more, check out
+[testing-library.com](https://testing-library.com/).
+
+If you enjoyed this post or found it useful, please consider
+[sharing it on Twitter](https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.adamgoth.com%2Fcomparing-enzyme-and-react-testing-library).
+
+If you want to stay updated on new posts,
+[follow me on Twitter](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fpublish.twitter.com%2F%3FbuttonType%3DFollowButton%26query%3Dhttps%253A%252F%252Ftwitter.com%252Finit_adam%26widget%3DButton&ref_src=twsrc%5Etfw&region=follow_link&screen_name=init_adam&tw_p=followbutton)
+
+If you have any questions, comments, or just want to say hello,
+[send me a message](https://twitter.com/messages/compose?recipient_id=33618361).
+
+Thanks for reading!
