@@ -28,16 +28,16 @@ Enzyme is a JavaScript Testing utility for React that makes it easier to assert,
 manipulate, and traverse your React Components’ output. It was created by AirBnB
 and released in 2015. When using Enzyme, it is common to render the React
 component that you are testing and then test the component based on certain
-props or state that are passed, or by calling functions contained within the
+props or state that are passed in, or by calling functions contained within the
 component.
 
-While Enzyme tests typically focus on components working correctly interally,
+While Enzyme tests typically focus on components working correctly internally,
 React Testing Library is more focused on testing the React application as it is
 experienced by the user. Tests tend to be more focused on the state of the DOM
 after imitating user behavior rather than the state of a particular component or
 implementation.
 
-In order to get a better understanding of this, let's look at some code.
+To get a better understanding of this, let's look at some code.
 
 ### Setting up
 
@@ -54,7 +54,7 @@ are available on GitHub.
 
 The file we're going to focus on in both repos is `src/components/ToDo.test.js`.
 
-Below is our testing file written in the typical style of Enzyme.
+Below is our testing file, written in the typical style of Enzyme.
 
 ```javascript
 // testing-with-enzyme/src/components/ToDo.test.js
@@ -200,14 +200,14 @@ Both files test for the following:
   entire item
 
 Because we are using Enzyme's `mount` function, the components in both tests are
-rendered in a similar fashion, with an instance of the component being created
-and then attached to the actual DOM. This would not be true if we had used
-another popular Enzyme function, `shallow` to render our component. This post
-does not focus on that difference, but you can read more about the difference
+rendered similarly, with an instance of the component being created and then
+attached to the actual DOM. This would not be true if we had used another
+popular Enzyme function, `shallow` to render our component. This post does not
+focus on that difference, but you can read more about the difference
 [here](https://gist.github.com/fokusferit/e4558d384e4e9cab95d04e5f35d4f913).
 
 The first significant way in that the tests start to differ is when we go to
-search for a particlar element in the DOM to assert its existance or its state.
+search for a particular element in the DOM to assert its existence or its state.
 Typically in an Enzyme test, you'll see elements searched for by their
 classname, as follows:
 
@@ -230,15 +230,16 @@ it("Renders two default todo items", () => {
 })
 ```
 
-So why is one better than the other? While classnames are rather abitrary, ARIA
-roles are not. ARIA roles provide additional context to elements for accessility
-purposes. In the future, as developers, we may go and update our classname. We
-may tweak the name, we may change the style, we may entirely change how we wrote
-our CSS. If that happens, all of the sudden our test breaks. But the application
-has not broken. By querying by an element's role rather than its classname, we
-can ensure that we are testing the application by looking for elements in the
-same manner that a user with assistive technology may be looking at the
-application. We look for elements based on the purpose they convey to our users.
+So why is one better than the other? While classnames are rather arbitrary, ARIA
+roles are not. ARIA roles provide additional context to elements for
+accessibility purposes. In the future, as developers, we may go and update our
+classname. We may tweak the name, we may change the style, we may entirely
+change how we wrote our CSS. If that happens, all of the sudden our test breaks.
+But the application has not broken. By querying by an element's role rather than
+its classname, we can ensure that we are testing the application by looking for
+elements in the same manner that a user with assistive technology may be looking
+at the application. We look for elements based on the purpose they convey to our
+users.
 
 This concept is discussed in the React Testing Library docs,
 [Which query should I use?](https://testing-library.com/docs/guide-which-query),
@@ -251,9 +252,10 @@ users would do to find a certain part of the application. This highlights
 > The more your tests resemble the way your software is used, the more
 > confidence they can give you.
 
-The library is written to provide methods and utlities that encourage you to
-tests that closely resemble how your web pages are used. It purposely drives the
-user towards accessbility and away from testing implementation details.
+The library is written to provide methods and utilities that encourage you to
+write tests that closely resemble how your web pages are used. It purposely
+drives the user towards accessibility and away from testing implementation
+details.
 
 Let's move on to another example and take a look at the difference in how we
 test that our application successfully creates a new item in the to-do list.
@@ -290,11 +292,11 @@ are things the user actually knows or cares about. All they know is that when
 they type in the box and then click the add button, a new item is added to the
 list.
 
-In order to get away from testing our code implementation and get closer to
-testing how the application is actually used, we turn once again to React
-Testing Library. Instead of creating fake DOM event objects and simulating
-various change events, we have the ability to mimic how users would actually
-interact with the application using `userEvent`'s, which are provided by the
+To get away from testing our code implementation and get closer to testing how
+the application is actually used, we turn once again to React Testing Library.
+Instead of creating fake DOM event objects and simulating various change events,
+we have the ability to mimic how users would actually interact with the
+application using `userEvent`'s, which are provided by the
 [user-event](https://github.com/testing-library/user-event) library.
 
 > user-event tries to simulate the real events that would happen in the browser
@@ -319,14 +321,14 @@ it("When the add button is pressed, if the input field has text, it creates a ne
 In contrast to the Enzyme test, to write the React Testing Library test, we
 don't need to know much more than what the user would now. We first look for an
 element with the role of `textbox`, we then simulate the user typing by using
-`userEvent.type`, we simuluate the user clicking with `userEvent.click` on the
-element with the accessbility label of `add`. We then assert that the text we
+`userEvent.type`, we simulate the user clicking with `userEvent.click` on the
+element with the accessibility label of `add`. We then assert that the text we
 typed in is appearing in the document.
 
 In addition to being a much closer representation of the user's experience with
 the application, writing this test this way also makes for a much less brittle
 test. We could update classnames or change the number of items in the list and
-the test would still pass, because the application would still be working. The
+the test would still pass because the application would still be working. The
 same can not be said for the first test written in Enzyme.
 
 ### Wrapping up
@@ -341,11 +343,13 @@ its guiding principle.
 
 We've all been there before when a little tiny change to a component causes a
 test to break without actually breaking any functionality. React Testing
-Library, used properly, guides us away from writing these types of implentation
-tests and towards writing robust tests and more accessbile code.
+Library, used properly, guides us away from writing these types of
+implementation tests and towards writing more accessible code and more robust
+tests that more closely resemble how the application is used.
 
-This post is intended as a high-level introduction to the library. It only
-scratches the surface of all the library has to offer. To learn more, check out
+While this post is intended to serve as a high-level introduction to React
+Testing Library and it's baked-in philosophy, it only scratches the surface of
+all the library has to offer. To learn more, visit the project's site at
 [testing-library.com](https://testing-library.com/).
 
 If you enjoyed this post or found it useful, please consider
