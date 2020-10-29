@@ -1,0 +1,162 @@
+---
+title: "Tips and Tricks: Chrome Dev Tools"
+slug: tips-and-tricks-chrome-dev-tools
+date: "2020-10-29"
+author: Adam Goth
+preview:
+  I recently spent some time diving into all that Chrome's developer tools have
+  to offer. It's quite impressive what the Chrome team has built to make the
+  lives of web developers easier. In this post, I will share a handful of the
+  nifty things I learned.
+categories:
+  - tooling
+keywords:
+  - javascript
+  - react
+  - web development
+  - development tools
+  - chrome
+  - browser
+---
+
+I recently spent some time diving into all that Chrome's developer tools have to
+offer. It's quite impressive what the Chrome team has built to make the lives of
+web developers easier. In this post, I will share a handful of the nifty things
+I learned.
+
+Let's jump in.
+
+### Toggle the console drawer
+
+Most people are probably familiar with the
+[Console](https://developers.google.com/web/tools/chrome-devtools/console/reference)
+tab. But you can open a console drawer from almost any other tab as well. This
+can easily be toggled by simply hitting the `esc` key.
+
+![escape key console toggle](https://media.giphy.com/media/C4nvLNDUimi984DvGl/giphy.gif)
+
+### Toggle all nested elements
+
+Clicking an element within the Elements tab will expand that particular element
+and show you any children elements belonging to it. Sometimes, elements can be
+nested several layers deep. By holding the `option` key while clicking an
+element, you can expand **all** children nested within that element.
+
+![toggle all nested elements](https://media.giphy.com/media/UCsgJYqUDCVUEg0q63/giphy.gif)
+
+### Scroll element into view
+
+Sometimes you may see an element with your Elements tab and wonder where exactly
+that element lives on the page. Usually, you can see the element get highlighted
+on the page as you hover it in the Elements tab, but sometimes the element is
+not within the page view. If you right-click the element, you can choose the
+"Scroll into view" option and Chrome will do just that.
+
+![scroll into view](https://media.giphy.com/media/JK74tuyVCAyDtLcXHq/giphy.gif)
+
+### Toggle an element's visibility
+
+For whatever reason, you may want to toggle whether an element on your page can
+be seen or not. This can easily be done by simply hitting the `h` key while the
+element is selected in the Elements tab.
+
+![h to toggle hidden element](https://media.giphy.com/media/t0ylr2sHarOQA8xuuF/giphy.gif)
+
+### Converting color formats
+
+When viewing an element's CSS `color` property in dev tools, you can toggle
+between RGB, HSL, and hex color formats by holding the `shift` key and clicking
+the color square. This can be convenient in various situations where you may
+find a color in one format, but need it in another.
+
+![coverting color format](https://media.giphy.com/media/yZQQLiyyxVdkBjHLoO/giphy.gif)
+
+### Access recently selected elements in console
+
+Sometimes we need access to DOM elements in the console so that we can inspect
+various properties or behavior. Chrome provides a quick shortcut to access these
+elements within the console. If you type `$0` into the console, you will get the
+element you most recently interacted with in the Elements tab. If you type in
+`$1`, you will get the second most recent element you interacted with, and so
+forth...
+
+![most recent elements console access](https://media.giphy.com/media/Fbpduv3lSKZX6eu1N5/giphy.gif)
+
+### Run commands
+
+By pressing `command` + `shift` + `p`, you can search dev tools for nearly
+anything and quickly
+[run various commands](https://developers.google.com/web/tools/chrome-devtools/command-menu).
+This gives you extremely quick access to many features of the dev tools. Give
+this one a try, you may find something you didn't know existed.
+
+![run commands](https://media.giphy.com/media/diz6pCLIjt8O1hLNkK/giphy.gif)
+
+### Blackbox scripts
+
+Ever get stuck debugging in some random runtime file that you never wanted to be
+in?
+[Blackboxing scripts](https://developer.chrome.com/devtools/docs/blackboxing) is
+your new friend. If there is a script that you do not want your debugger to go
+into, you can right-click it and select "Blackbox script". Easy enough.
+
+![blackbox scripts](https://media.giphy.com/media/0QiT8USJ5inJFmxEF1/giphy.gif)
+
+### Conditional breakpoints
+
+If you have used the debugger in the dev tools before, you are likely aware that
+you can set breakpoints to pause your code execution. In addition to your
+standard breakpoint, Chrome allows you to also set
+[conditional breakpoints](https://developers.google.com/web/tools/chrome-devtools/javascript/breakpoints).
+This allows you to specify that a variable must have a certain value in order
+for the breakpoint to hit. This can be very convenient when you are trying to
+debug an issue where a particular value must be present. To set a conditional
+breakpoint, right-click the line you want to set it at and click "Add
+conditional breakpoint..."
+
+![conditional breakpoint](https://media.giphy.com/media/n7oOV9shQmzJTDwkNt/giphy.gif)
+
+### Networking calls: Who called what?
+
+Sometimes we see network calls in the
+[Network](https://developers.google.com/web/tools/chrome-devtools/network/reference)
+tab and we're not sure where they came from. Chrome has a neat trick that shows
+you if one network call was initiated by another call and if that network call
+in turn has dependencies of its own. To take a look, simply hold `shift` while
+hovering a network call. Initiators are colored green and dependencies are
+colored red.
+
+![networking calls](https://media.giphy.com/media/fH8XjzbnTUDJGcHAJ4/giphy.gif)
+
+### Select multiple networking request types
+
+If you are familiar with the Network tab, you are likely aware that you can
+select a certain type of network request to filter your results, e.g. XHR. But
+maybe you are interested in both XHR and JS requests. By holding `command` and
+clicking different request types, you can select multiple types of requests at
+once.
+
+![multiple network request types](https://media.giphy.com/media/C4SHhZBSYBKkMv4wrx/giphy.gif)
+
+### Wrapping up
+
+The Chrome Dev Tools are seriously impressive. These tips are just the tip of
+the iceberg. The deeper you dive into what features are available to you, the
+more amazed you will be. The
+[documentation](https://developers.google.com/web/tools/chrome-devtools) is a
+great reference. If you are more of a visual learner, I would recommend the
+[Mastering Chrome Dev Tools](https://frontendmasters.com/courses/chrome-dev-tools/)
+on Frontend Masters by [Jon Kuperman](https://twitter.com/jkup).
+
+Thanks for reading, I hope you learned something!
+
+If you enjoyed this post or found it useful, please consider
+[sharing it on Twitter](https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.adamgoth.com%2Ftips-and-tricks-chrome-dev-tools).
+
+If you want to stay updated on new posts,
+[follow me on Twitter](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fpublish.twitter.com%2F%3FbuttonType%3DFollowButton%26query%3Dhttps%253A%252F%252Ftwitter.com%252Finit_adam%26widget%3DButton&ref_src=twsrc%5Etfw&region=follow_link&screen_name=init_adam&tw_p=followbutton)
+
+If you have any questions, comments, or just want to say hello,
+[send me a message](https://twitter.com/messages/compose?recipient_id=33618361).
+
+Thanks for reading!
