@@ -1,0 +1,224 @@
+---
+title: Running a serverless API using Netlify Functions
+slug: running-a-serverless-api-using-netlify-functions
+date: "2020-11-29"
+author: Adam Goth
+preview:
+  Over the last few years, serverless applications have been growing in
+  popularity. There are many use cases in which a serverless solution is more
+  practical and more convenient than the traditional server solution. In this
+  post, we'll look at setting up a serverless Express.js API using Netlify
+  functions.
+categories:
+  - development
+keywords:
+  - javascript
+  - serverless
+  - api
+  - web development
+  - express.js
+  - netlify
+  - netlify functions
+---
+
+Over the last few years, serverless applications have been growing in
+popularity. There are many use cases in which a serverless solution is more
+practical and more convenient than the traditional server solution. In this
+post, we'll look at setting up a serverless Express.js API using Netlify
+functions.
+
+### Overview
+
+Before we dive into the code for this demo application, let's talk about a few
+concepts at a high-level.
+
+### Serverless
+
+'Serverless' is a term that is used for what can generally be thought of as a
+method of providing backend services on an as-used basis. Rather than setting up
+specific infrastructure, or a server, to provide the backend services, you can
+utilize a "serverless" provider to handle this functionality instead. This was
+first popularized by AWS Lambda but is now a service offered by many other
+companies as well, including the one we'll be looking at today, Netlify.
+
+### AWS Lambda
+
+As mentioned above, AWS Lambda is the most popular provider of serverless
+computing. Here's how AWS Lamba describes itself in its own words:
+
+> AWS Lambda lets you run code without provisioning or managing servers. You pay
+> only for the compute time you consume.
+
+> With Lambda, you can run code for virtually any type of application or backend
+> service - all with zero administration. Just upload your code and Lambda takes
+> care of everything required to run and scale your code with high availability.
+> You can set up your code to automatically trigger from other AWS services or
+> call it directly from any web or mobile app.
+
+As great as this sounds (and it really is great), setting up an AWS lambda
+function can be a tedious process, requiring quite a bit of configuration that
+can be easily confusing to someone is who new to serverless functions. If you're
+curious to see for yourself, here's an
+[example tutorial](https://docs.aws.amazon.com/toolkit-for-eclipse/v1/user-guide/lambda-tutorial.html)
+directly from the AWS docs. But not to worry, that's why we're here to talk
+about Netlify Functions.
+
+### Netlify Functions
+
+Netlify Functions greatly simplifies the process for running serverless
+functions. Using Netlify Functions, we can simply write our lambda function and
+drop it into the functions folder of our Netlify-hosted application. Behind the
+scenes, Netlify handles the interaction with AWS for us. We don't even need an
+AWS account. Every Netlify account is set up for this feature out of the box.
+There's no setup, servers, or ops required.
+
+Let's see what this looks like in code.
+
+### Our application
+
+The code for this demo can be found
+[here](https://github.com/adamgoth/netlify-serverless-demo). For the purposes of
+this post, I will assume the reader has some basic familiarity with
+[Express.js](https://expressjs.com/) and Node as we will be using these to build
+our API.
+
+If we take a look at our package dependencies, we have just five packages:
+
+`nodemon` is used to automatically restart our server while we're working on it
+in development
+
+`express` gives us our API framework
+
+`body-parser` is middleware that allows us the parse our request bodies
+
+`serverless-http` allows us to wrap our API for serverless use
+
+`netlify-lambda` is a tool that helps us build our application code so that it
+can be consumed correctly by Netlify using Netlify Functions
+
+The other thing to note in the `package.json` file are the two scripts. We have
+`"start": "nodemon server-local.js"` which is used for development, and
+`"build": "netlify-lambda build express"` which is used to build and deploy.
+
+The `start` script is fairly straight forward, it will just execute our
+`server-local.js` file which in turn is calling `express/server.js`. This works
+for local development, but we need to do additional work in our `build` script
+for the application to work as a serverless function once deployed to Netlify.
+In the `build` script, we call
+[`netlify-lambda build`](https://github.com/netlify/netlify-lambda#netlify-lambda-build)
+which takes a source folder as an argument (`express` in our case) and outputs
+it to a built folder. The built folder is where Netlify will look for our
+serverless functions. We have a couple of options for how we specify this. We
+could specify the designated folder within Netlify's application settings using
+Netlify's web app, or within our application code, we can specify the designated
+folder with a `netlify.toml` configuration file. In our case, we'll use a
+configuration file that lives in our root directory that looks like this:
+
+```
+// netlify.toml
+
+[build]
+  command = "npm install && npm run build"
+  functions = "functions"
+```
+
+With our scripts and build configuration accounted for, let's take a look at the
+core of the application.
+
+The core of the application lives in the `express/server.js` file, and in our
+case, is just 29 lines.
+
+```javascript
+"use strict"
+const express = require("express")
+const serverless = require("serverless-http")
+const app = express()
+const bodyParser = require("body-parser")
+const router = express.Router()
+
+app.use(bodyParser.json())
+app.use("/.netlify/functions/server", router) // path must route to lambda
+app.use("/", router)
+
+router.get("/", (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/html" })
+  res.write("<h1>Up and running</h1>")
+  res.end()
+})
+
+router.post("/doSomething", async (req, res) => {
+  try {
+    // maybe do some database interaction or third-party API call here!
+    res.status(200).send({ data: "success" })
+  } catch (err) {
+    console.log(err)
+    res.status(400).send({ error: "bad request" })
+  }
+})
+
+module.exports = app
+module.exports.handler = serverless(app)
+```
+
+If you've ever worked with Express.js, this should look pretty familiar to you.
+We have two endpoints, one `GET` endpoint at `/` and one `POST` endpoint at
+`/doSomething`.
+
+These endpoints don't do much, but you could do just about anything you would
+normally do with `GET` or `POST` endpoints here. Hit a third-party API, connect
+to a database, fire off some sort of transaction, etc.
+
+The two lines in the application that are specific to using Netlify's serverless
+functions are line 9 and line 29.
+
+As we specified in our `netlify.toml` configuration file, our function code is
+going to live at `./netlify/functions/server`. So we will tell our express app
+on line 9 to use our `router` object anytime a request is sent to this server.
+
+```
+app.use("/.netlify/functions/server", router)
+```
+
+Lastly, on line 29, we will utilize the
+[`serverless-http`](https://github.com/dougmoscrop/serverless-http) package to
+wrap our application up for serverless use. This means our application can work
+as expected without any HTTP server, ports, or sockets.
+
+```
+module.exports.handler = serverless(app)
+```
+
+With that, the application is all set to
+[deploy to Netlify](https://docs.netlify.com/site-deploys/overview/#deploy-summary).
+If you've never deployed on Netlify before, you'll be amazed at how simple it
+is. This post won't go into details but it isn't much more than authenticating
+your GitHub account and selecting the repo and branch to deploy. Once the
+application is deployed, you can start accessing the endpoints we created at
+`<your site URL>/.netlify/functions/server`.
+
+### Wrapping up
+
+Hopefully you were able to follow along in creating this Netlify serverless
+function. Serverless computing is still a developing and evolving technology but
+its popularity continues to grow as more developers find it more suitable to
+their needs than traditional server applications.
+
+The particular use case that led me to using Netlify functions is that I needed
+to make a third-party API call from my client application that required a
+private API key in the header. With just client-side code, there is no good way
+to keep your private API key private. I decided I needed a server to proxy the
+request through, but I didn't want to create and dedicate an entire server just
+to pass one small API request through. So this ended up being a perfect
+solution. Now that I know how convenient and simple this can be, I will be
+looking for more opportunities to utilize Netlify Functions.
+
+If you enjoyed this post or found it useful, please consider
+[sharing it on Twitter](https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.adamgoth.com%2Frunning-a-serverless-api-using-netlify-functions).
+
+If you want to stay updated on new posts,
+[follow me on Twitter](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fpublish.twitter.com%2F%3FbuttonType%3DFollowButton%26query%3Dhttps%253A%252F%252Ftwitter.com%252Finit_adam%26widget%3DButton&ref_src=twsrc%5Etfw&region=follow_link&screen_name=init_adam&tw_p=followbutton)
+
+If you have any questions, comments, or just want to say hello,
+[send me a message](https://twitter.com/messages/compose?recipient_id=33618361).
+
+Thanks for reading!
