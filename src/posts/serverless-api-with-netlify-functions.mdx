@@ -34,7 +34,7 @@ concepts at a high-level.
 
 ### Serverless
 
-'Serverless' is a term that is used for what can generally be thought of as a
+"Serverless" is a term that is used for what can generally be thought of as a
 method of providing backend services on an as-used basis. Rather than setting up
 specific infrastructure, or a server, to provide the backend services, you can
 utilize a "serverless" provider to handle this functionality instead. This was
@@ -77,10 +77,12 @@ Let's see what this looks like in code.
 ### Our application
 
 The code for this demo can be found
-[here](https://github.com/adamgoth/netlify-serverless-demo). For the purposes of
-this post, I will assume the reader has some basic familiarity with
-[Express.js](https://expressjs.com/) and Node as we will be using these to build
-our API.
+[here](https://github.com/adamgoth/netlify-serverless-demo). Since the purpose
+of this post is to show how to set up a serverless API, rather than do anything
+specific with the API, this particular demo application will serve up an
+extremely basic API with two endpoints that don't do much. I will assume the
+reader has some basic familiarity with [Express.js](https://expressjs.com/) and
+Node as we will be using these to build the API.
 
 If we take a look at our package dependencies, we have just five packages:
 
@@ -194,7 +196,9 @@ If you've never deployed on Netlify before, you'll be amazed at how simple it
 is. This post won't go into details but it isn't much more than authenticating
 your GitHub account and selecting the repo and branch to deploy. Once the
 application is deployed, you can start accessing the endpoints we created at
-`<your site URL>/.netlify/functions/server`.
+`<your site URL>/.netlify/functions/server/<your endpoint>`. We now have a basic
+yet fully-functioning API, without having to run or provision a dedicated and
+separate server!
 
 ### Wrapping up
 
@@ -211,6 +215,10 @@ request through, but I didn't want to create and dedicate an entire server just
 to pass one small API request through. So this ended up being a perfect
 solution. Now that I know how convenient and simple this can be, I will be
 looking for more opportunities to utilize Netlify Functions.
+
+For more technical information regarding the usage and implementation of Netlify
+Functions, be sure to visit
+[the docs](https://docs.netlify.com/functions/overview/#manage-your-serverless-functions).
 
 If you enjoyed this post or found it useful, please consider
 [sharing it on Twitter](https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.adamgoth.com%2Frunning-a-serverless-api-using-netlify-functions).
