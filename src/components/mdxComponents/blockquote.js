@@ -1,9 +1,14 @@
 import React from "react"
 
 export default ({ children }) => (
-  <p
-    style={{ borderLeft: "4px solid #DDD", padding: "0 15px", margin: "#777" }}
+  <blockquote
+    style={{
+      borderLeft: "4px solid #DDD",
+      padding: "0 15px",
+      marginInlineStart: "auto",
+      marginInlineEnd: "auto",
+    }}
   >
     {children}
-  </p>
+  </blockquote>
 )

@@ -12,7 +12,7 @@ import "./posts-page-layout.scss"
 export default function PageTemplate({ data: { mdx } }) {
   return (
     <>
-      <SEO keywords={mdx.frontmatter.keywords} />
+      <SEO keywords={mdx.frontmatter.keywords} title={mdx.frontmatter.title} />
       <Helmet>
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={mdx.frontmatter.title} />
