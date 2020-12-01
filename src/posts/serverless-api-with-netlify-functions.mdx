@@ -43,8 +43,9 @@ companies as well, including the one we'll be looking at today, Netlify.
 
 ### AWS Lambda
 
-As mentioned above, AWS Lambda is the most popular provider of serverless
-computing. Here's how AWS Lamba describes itself in its own words:
+As mentioned above, [AWS Lambda](https://aws.amazon.com/lambda/) is the most
+popular provider of serverless computing. Here's how AWS Lamba describes itself
+in its own words:
 
 > AWS Lambda lets you run code without provisioning or managing servers. You pay
 > only for the compute time you consume.
@@ -65,12 +66,13 @@ about Netlify Functions.
 
 ### Netlify Functions
 
-Netlify Functions greatly simplifies the process for running serverless
-functions. Using Netlify Functions, we can simply write our lambda function and
-drop it into the functions folder of our Netlify-hosted application. Behind the
-scenes, Netlify handles the interaction with AWS for us. We don't even need an
-AWS account. Every Netlify account is set up for this feature out of the box.
-There's no setup, servers, or ops required.
+[Netlify Functions](https://www.netlify.com/products/functions/) greatly
+simplifies the process for running serverless functions. Using Netlify
+Functions, we can simply write our lambda function and drop it into the
+functions folder of our Netlify-hosted application. Behind the scenes, Netlify
+handles the interaction with AWS for us. We don't even need an AWS account.
+Every Netlify account is set up for this feature out of the box. There's no
+setup, servers, or ops required.
 
 Let's see what this looks like in code.
 
@@ -101,6 +103,13 @@ can be consumed correctly by Netlify using Netlify Functions
 The other thing to note in the `package.json` file are the two scripts. We have
 `"start": "nodemon server-local.js"` which is used for development, and
 `"build": "netlify-lambda build express"` which is used to build and deploy.
+
+```
+  "scripts": {
+    "build": "netlify-lambda build express",
+    "start": "nodemon server-local.js"
+  }
+```
 
 The `start` script is fairly straight forward, it will just execute our
 `server-local.js` file which in turn is calling `express/server.js`. This works
