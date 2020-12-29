@@ -51,6 +51,13 @@ export default () => {
               }
             }
           }
+          devto: file(relativePath: { eq: "social-devto.png" }) {
+            childImageSharp {
+              fixed(width: 28) {
+                ...GatsbyImageSharpFixed
+              }
+            }
+          }
         }
       `}
       render={data => (
@@ -79,6 +86,14 @@ export default () => {
               target="_blank"
             >
               <Img fixed={data.linkedin.childImageSharp.fixed} />
+            </a>
+            <a
+              className="Landing-icon"
+              href="https://dev.to/adamgoth"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Img fixed={data.devto.childImageSharp.fixed} />
             </a>
             <a
               className="Landing-icon"
