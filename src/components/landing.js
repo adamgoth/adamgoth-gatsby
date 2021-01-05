@@ -113,7 +113,7 @@ export default () => {
             </a>
             <a
               className="Landing-icon"
-              href="mailto://adamgoth@gmail.com"
+              href="mailto://hello@adamgoth.com"
               rel="noopener noreferrer"
               target="_blank"
             >
