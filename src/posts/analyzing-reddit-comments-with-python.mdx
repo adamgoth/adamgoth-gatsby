@@ -326,11 +326,47 @@ value of `1`. If it already exists in `word_dict`, then we will just increment
 the count value up by 1. When we are finished looping through each word, we will
 return the `word_dict` we created.
 
+The end of the script looks as follows:
+
+```
+comment_string = ' '.join(comment_array)
+results = analyze_words(comment_string)
+
+sorted = sorted(results.items(), key=lambda x: x[1], reverse=True)
+
+print(f'{comment_count} comments analyzed')
+
+for key in sorted:
+    print(key)
+```
+
+After combining all the comments into a single string and passing that string
+through `analyze_words`, we can sort all the results by the number of
+appearances counted by calling
+`sorted = sorted(results.items(), key=lambda x: x[1], reverse=True)`. We can
+then print the total number of comments we parsed and then each word and the
+number of times it appeared.
+
+### Wrapping up
+
+The script in its entirety can be found [here](todo: add this). To run the
+script, simply run `python reddit-comment-analysis.py` from the directory
+containing the script file.
+
+This script serves as a basic starting point into fetching and analyzing data
+from the web. There is room for many improvements and enhancements to this
+script. Ideas for additional features include:
+
+- Input validation
+- Options for handling upper and lower casing
+- Options for removing special characters
+- Options for removing common words (the, and, I, etc.)
+
 If you enjoyed this post or found it useful, please consider
-[sharing it on Twitter](https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.adamgoth.com%2Fcomparing-enzyme-and-react-testing-library).
+[sharing it on Twitter](https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.adamgoth.com%2Fanalyzing-reddit-comments-using-python).
 
 If you want to stay updated on new posts,
-[follow me on Twitter](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fpublish.twitter.com%2F%3FbuttonType%3DFollowButton%26query%3Dhttps%253A%252F%252Ftwitter.com%252Finit_adam%26widget%3DButton&ref_src=twsrc%5Etfw&region=follow_link&screen_name=init_adam&tw_p=followbutton)
+[follow me on Twitter](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fpublish.twitter.com%2F%3FbuttonType%3DFollowButton%26query%3Dhttps%253A%252F%252Ftwitter.com%252Finit_adam%26widget%3DButton&ref_src=twsrc%5Etfw&region=follow_link&screen_name=init_adam&tw_p=followbutton).
 
 If you have any questions, comments, or just want to say hello,
 [send me a message](https://twitter.com/messages/compose?recipient_id=33618361).
