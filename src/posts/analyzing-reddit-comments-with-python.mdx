@@ -59,7 +59,8 @@ these global variables to keep track of data as we parse through comments.
 `comment_count` is an integer and will track the number of comments we parse,
 `comment_array` is an array and will hold the actual comment strings, and
 `more_comment_ids` is another array that will hold ID strings that we will need
-in order to fetch additional comments (for posts with many comments).
+in order to fetch additional comments that are not returned in the initial
+payload (commonly found in posts with many comments).
 
 ```
 # imports
@@ -71,8 +72,8 @@ comment_array = []
 more_comment_ids = []
 ```
 
-Next, we need to fetch the reddit post's data. To do that, we can append `.json`
-to the end of any reddit post URL.
+Next, we need to fetch the data for the reddit post. To do that, we can append
+`.json` to the end of any reddit post URL.
 
 An example would be:
 `https://www.reddit.com/r/redditdev/comments/krolrb/multicomments.json`.
@@ -111,9 +112,27 @@ tricky enough, there's another issue we have to worry about. Since comment
 threads can become quite long, not every comment is always displayed on the
 initial thread load. When this happens, reddit shows "load more replies" buttons
 within threads. So how do we get these as well? To handle these instances, the
-API will deliver a child with a `kind` property value of `more`. The array of
-`children` within the `more` object will contain a list of thread IDs that can
-be used to fetch additional comments. So in addition to parsing all comment
+API will deliver a child with a `kind` property value of `more`.
+
+```
+{
+    "kind": "more",
+    "data": {
+        "count": 2,
+        "name": "t1_ghp1m6v",
+        "id": "ghp1m6v",
+        "parent_id": "t1_ghozojl",
+        "depth": 2,
+        "children": [
+            "ghp1m6v"
+        ]
+    }
+}
+```
+
+The array of `children` within the `more` object will contain a list of thread
+IDs that can be used to fetch additional comments. In the code example above,
+there is just one child ID, `ghp1m6v`. So in addition to parsing all comment
 trees recursively, we will also have to collect any additional comment thread
 IDs and then do the same thing for those.
 
@@ -140,10 +159,10 @@ def parse_children_for_comments(children):
 
 It will take an array of `children` objects that are sent back in the response
 data and will pull out the comment text which is found in the `body` property.
-For each child in the array argument, we will check its `kind`. If the `kind` is
-`more`, we will loop through and add each id to the global array we created,
-`more_comment_ids`. We will eventually come back to this array of ids and parse
-through it.
+For each child in the array argument of `children`, we will check its `kind`. If
+the `kind` is `more`, we will loop through and add each id to the global array
+we created, `more_comment_ids`. We will eventually come back to this array of
+ids and parse through it.
 
 Next, if the `kind` is `t1`, that means we have a comment and we want to read
 its text. In order to do that, we simply get the text with
@@ -161,11 +180,11 @@ def get_replies(comment):
         parse_children_for_comments(children)
 ```
 
-First, we check if there are any replies. When there no replies, the `replies`
-property will be an empty string. If the string is not empty, we know we have a
-reply. As I mentioned above, replies take the same format as the original
-comment it is replying to. So in order to parse the reply text, we can reuse the
-same `parse_children_for_comments` function we already wrote. Since
+First, we check if there are any replies. When there are no replies, the
+`replies` property will be an empty string. If the string is not empty, we know
+we have a reply. As I mentioned above, replies take the same format as the
+original comment it is replying to. So in order to parse the reply text, we can
+reuse the same `parse_children_for_comments` function we already wrote. Since
 `parse_children_for_comments` will again call `get_replies`, and `get_replies`
 will again call `parse_children_for_comments` until there are no comments left,
 this will recursively continue until we reach a child comment with an empty
@@ -201,12 +220,13 @@ def sanitize_input(url):
     return url
 ```
 
-We pass the URL into the function, the function checks if the last character is
-a `/` and removes it is, and then appends `.json` to the end of the string.
-After we pass the user's inputted URL to this function, we're ready to fetch the
-post data.
+We pass the URL as an argument into the function. The function checks if the
+last character of `url` is a `/` and removes it if it is. Then the function
+appends `.json` to the end of `url`. After we pass the user's inputted URL to
+this function, we're ready to fetch the post data.
 
 ```
+# pass user's url to sanitize helper
 sanitized_thread_url = sanitize_input(thread_url)
 
 # make network call
@@ -238,7 +258,7 @@ requests library built-in JSON decoder and called `.json()` on the response. We
 then write a simple `for` statement that takes each child in the response data
 and passes it to the `parse_children_for_comments` we previously discussed.
 
-After the `for` loop from line 12 completes, we should have a number of comments
+After the `for` loop from line 13 completes, we should have a number of comments
 stored in our global `comment_array`. Additionally, depending on the number of
 comments from the post, we may have found some additional comment IDs and stored
 them in our global `more_comment_ids` array. As a reminder, these are IDs we can
@@ -265,7 +285,7 @@ We simply pass the `comment_id` as an argument and then do a string replace on
 We're then ready to make the requests for the additional comments.
 
 ```
-# deal with extra comment ids
+# handle extra comment ids
 for id in more_comment_ids:
     req_data = requests.get(create_thread_url(
         id), headers={'User-agent': 'adamgoth.com'})
