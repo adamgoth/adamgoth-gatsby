@@ -19,16 +19,16 @@ analysis. We will then apply it to the comment section of any given reddit post.
 
 ### Overview
 
-Between my job and my personal projects, I typically spend most of my time
-building web applications using React and Node. That means writing almost
-exlusively JavaScript. To keep my perspective on programming fresh and not
-strictly confined to a single language, I wanted to take a little time to step
-out of the world of JavaScript and explore the world of another programming
-language. I decided to come up with a little project idea and to build it with
-Python. Python is a powerful yet friendly programming language that is popular
-with beginners and experienced programmers alike. It was created in 1991 by
-Guido van Rossum, but continues to rise in popularity almost 30 years later. In
-2020, Python was at or near the top of the list for in-demand languages for
+Between my job and side projects, I typically spend most of my time building web
+applications using React and Node. That means writing almost exclusively
+JavaScript. To keep my perspective on programming fresh and not strictly
+confined to a single language, I wanted to take a little time to step out of the
+world of JavaScript and explore the world of another programming language. I
+decided to come up with a little project idea and to build it with Python.
+Python is a powerful yet friendly programming language that is popular with
+beginners and experienced programmers alike. It was created in 1991 by Guido van
+Rossum, but continues to rise in popularity almost 30 years later. In 2020,
+Python was at or near the top of the list for in-demand languages for
 programming jobs. It was also deemed by Wired magazine to be
 [more popular than ever before](https://www.wired.com/story/python-language-more-popular-than-ever/).
 After spending just a short time writing code with Python, it's not hard to see
@@ -39,24 +39,26 @@ why it's a popular choice. Let's jump in.
 This post will assume you have basic programming knowledge and that you have
 Python 3 installed. For more detailed information on installing Python,
 [start here](https://wiki.python.org/moin/BeginnersGuide/Download). The repo for
-this project can be found [here](todo: add this). You will notice a `.py` file
-containing the full script, as well as a `.ipynb` file containing a Jupyter
-Notebook for the script. [The Jupyter Notebook](https://jupyter.org/) is an
-open-source web application that allows you to create and share documents that
-contain live code, equations, visualizations and narrative text, which can make
-it easier to follow along and learn how a python script works.
+this project can be found
+[here](https://github.com/adamgoth/reddit-comment-analysis). You will notice a
+`.py` file containing the full script, as well as a `.ipynb` file containing a
+Jupyter Notebook for the script. [The Jupyter Notebook](https://jupyter.org/) is
+an open-source web application that allows you to create and share documents
+that contain live code, equations, visualizations, and narrative text, which can
+make it easier to follow along and learn how a python script works.
 
 ### The script
 
-The script in its entirety can be found [here](todo: add this).
+The script in its entirety can be found
+[here](https://github.com/adamgoth/reddit-comment-analysis/blob/master/reddit-comment-analysis.py).
 
 The first thing we need to do is import the requests library. This is what we
-will use in order to make the HTTP request to reddit to get the comment data
-from the reddit post. After that, we will initialize a few global variables. We
-will use these global variables to keep track of data as we parse through
-comments. `comment_count` is an integer and will track the number of comments we
-parse, `comment_array` is an array and will hold the actual comment strings, and
-`more_comment_ids` is another array which will hold ID strings that we will need
+will use to make the HTTP request to reddit to get the comment data from the
+reddit post. After that, we will initialize a few global variables. We will use
+these global variables to keep track of data as we parse through comments.
+`comment_count` is an integer and will track the number of comments we parse,
+`comment_array` is an array and will hold the actual comment strings, and
+`more_comment_ids` is another array that will hold ID strings that we will need
 in order to fetch additional comments (for posts with many comments).
 
 ```
@@ -69,8 +71,8 @@ comment_array = []
 more_comment_ids = []
 ```
 
-Next, we need to fetch the reddit post's data. In order to do that, we can
-append `.json` to the end of any reddit post URL.
+Next, we need to fetch the reddit post's data. To do that, we can append `.json`
+to the end of any reddit post URL.
 
 An example would be:
 `https://www.reddit.com/r/redditdev/comments/krolrb/multicomments.json`.
@@ -98,9 +100,9 @@ kinds of children. A child with a `kind` of `t1` indicates that the child
 represents a comment. Within the comments `data` property, among many other
 properties, the text of the comment can be found on the `body` property, along
 with any possible replies which are located on the `replies` property. Replies
-are structured the same way as comments. They themselves contain children and
-the children has `kind` and `data` properties. Within every reply to a comment,
-we may see another reply to that reply comment. Each of these contain their own
+are structured the same way as comments. They contain children and the children
+has `kind` and `data` properties. Within every reply to a comment, we may see
+another reply to that reply comment. Each of these contains their own
 identically formatted children. So in order to analyze all comments within a
 thread, we'll have to recursively sift through all comments and replies.
 
@@ -110,14 +112,14 @@ threads can become quite long, not every comment is always displayed on the
 initial thread load. When this happens, reddit shows "load more replies" buttons
 within threads. So how do we get these as well? To handle these instances, the
 API will deliver a child with a `kind` property value of `more`. The array of
-`children` within the `more` object will contain a list of thread IDs which can
+`children` within the `more` object will contain a list of thread IDs that can
 be used to fetch additional comments. So in addition to parsing all comment
 trees recursively, we will also have to collect any additional comment thread
 IDs and then do the same thing for those.
 
-Hopefully you are still with me at this point. Talking about all of this without
-writing any code can be confusing, so let's try to break it down with some
-functions that will help us achieve this goal.
+Hopefully, you are still with me at this point. Talking about all of this
+without writing any code can be confusing, so let's try to break it down with
+some functions that will help us achieve this goal.
 
 The first function we'll write is `parse_children_for_comments`.
 
@@ -159,11 +161,11 @@ def get_replies(comment):
         parse_children_for_comments(children)
 ```
 
-First we check if there are any replies. When there no replies, the `replies`
+First, we check if there are any replies. When there no replies, the `replies`
 property will be an empty string. If the string is not empty, we know we have a
 reply. As I mentioned above, replies take the same format as the original
-comment it is replying to. So in order to parse the reply text, we can actually
-reuse the same `parse_children_for_comments` function we already wrote. Since
+comment it is replying to. So in order to parse the reply text, we can reuse the
+same `parse_children_for_comments` function we already wrote. Since
 `parse_children_for_comments` will again call `get_replies`, and `get_replies`
 will again call `parse_children_for_comments` until there are no comments left,
 this will recursively continue until we reach a child comment with an empty
@@ -184,7 +186,7 @@ We can expect the user to paste in a URL for a reddit post. For example, it may
 look something like this:
 `https://www.reddit.com/r/redditdev/comments/krolrb/multicomments/`
 
-In order to get the post data, we need to turn
+To get the post data, we need to turn
 `https://www.reddit.com/r/redditdev/comments/krolrb/multicomments/` into
 `https://www.reddit.com/r/redditdev/comments/krolrb/multicomments.json`.
 
@@ -223,13 +225,13 @@ if req_data.status_code == 200:
 
 We call `requests.get()`, passing our URL as the first parameter, as well as a
 headers value for a second parameter. The reason we need to specify a
-`User-agent` property in the header is so that we have a unique identify to
+`User-agent` property in the header is so that we have a unique identity to
 reddit. This will ensure we appear entirely anonymous and run into
 [rate-limiting](https://en.wikipedia.org/wiki/Rate_limiting) issues.
 
 Once we have our data back in our `req_data` variable, the first thing we'll
-check is if we did not get `200` response for any reason. If the response is not
-`200`, we will print out the error.
+check is if we did not get a `200` response for any reason. If the response is
+not `200`, we will print out the error.
 
 Assuming we get a `200`, we can then start parsing the data. We can use the
 requests library built-in JSON decoder and called `.json()` on the response. We
@@ -247,7 +249,7 @@ have a `kind` property value of `more`.
 
 The URL for fetching the additional comment data looks similar to the URL we
 used for fetching the initial post data. The only difference is the comment ID
-is appeneded to the end. So
+is appended to the end. So
 `https://www.reddit.com/r/redditdev/comments/krolrb/multicomments.json` becomes
 `https://www.reddit.com/r/redditdev/comments/krolrb/multicomments/{comment_id}.json`.
 We can write a simple helper function to do this for us.
@@ -287,8 +289,8 @@ successful, we'll parse the data the same way we did before, passing each child
 in the data to `parse_children_for_comments`. As a word of caution, for posts
 with thousands of comment replies, this can result in a large number of
 additional comment IDs. It's possible to have hundreds of IDs to fetch. Each one
-of these will require a syncronous network call, so it can take quite awhile if
-this is the case.
+of these will require a synchronous network call, so it can take quite a while
+if this is the case.
 
 Once all the additional comment IDs have been fetched, we have all the data we
 need to run our word analysis. To do this, we will combine all of the comments
@@ -315,16 +317,16 @@ The function takes a single string as an argument called `words`. It then breaks
 the string into an array of words called `analysis_string` by splitting the
 string on each space character found in the string. We create an empty
 [dictionary](https://docs.python.org/3/tutorial/datastructures.html#dictionaries)
-called `word_dict` that we will use to keep track of each words appearance. Then
-we loop through each word in our `analysis_string` array. For each word, we use
-string replaces to strip out various common special characters (commas, periods,
-etc.) and then call `.lower()` on it to convert all uppercase characters to
-lowercase characters. This ensures that `The` and `the` are not tracked as two
-different words. As we go through each word in the array, if the word does not
-exist in our `word_dict` dictionary yet, we will add it and give it a count
-value of `1`. If it already exists in `word_dict`, then we will just increment
-the count value up by 1. When we are finished looping through each word, we will
-return the `word_dict` we created.
+called `word_dict` that we will use to keep track of each word's appearance.
+Then we loop through each word in our `analysis_string` array. For each word, we
+use string replaces to strip out various common special characters (commas,
+periods, etc.) and then call `.lower()` on it to convert all uppercase
+characters to lowercase characters. This ensures that `The` and `the` are not
+tracked as two different words. As we go through each word in the array, if the
+word does not exist in our `word_dict` dictionary yet, we will add it and give
+it a count value of `1`. If it already exists in `word_dict`, then we will just
+increment the count value up by 1. When we are finished looping through each
+word, we will return the `word_dict` we created.
 
 The end of the script looks as follows:
 
@@ -349,11 +351,12 @@ number of times it appeared.
 
 ### Wrapping up
 
-The script in its entirety can be found [here](todo: add this). To run the
-script, simply run `python reddit-comment-analysis.py` from the directory
-containing the script file.
+The script in its entirety can be found
+[here](https://github.com/adamgoth/reddit-comment-analysis/blob/master/reddit-comment-analysis.py).
+To run the script, simply run `python reddit-comment-analysis.py` from the
+directory containing the script file.
 
-This script serves as a basic starting point into fetching and analyzing data
+This script serves as a basic starting point for fetching and analyzing data
 from the web. There is room for many improvements and enhancements to this
 script. Ideas for additional features include:
 
