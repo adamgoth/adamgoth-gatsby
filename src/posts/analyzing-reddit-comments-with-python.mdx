@@ -62,7 +62,7 @@ these global variables to keep track of data as we parse through comments.
 in order to fetch additional comments that are not returned in the initial
 payload (commonly found in posts with many comments).
 
-```
+```python
 # imports
 import requests  # The requests library for HTTP requests in Python
 
@@ -80,7 +80,7 @@ An example would be:
 
 What we get back is JSON that will have a basic format that looks like this:
 
-```
+```javascript
 {
     "kind": "Listing",
     "data": {
@@ -114,7 +114,7 @@ initial thread load. When this happens, reddit shows "load more replies" buttons
 within threads. So how do we get these as well? To handle these instances, the
 API will deliver a child with a `kind` property value of `more`.
 
-```
+```javascript
 {
     "kind": "more",
     "data": {
@@ -142,7 +142,7 @@ some functions that will help us achieve this goal.
 
 The first function we'll write is `parse_children_for_comments`.
 
-```
+```python
 def parse_children_for_comments(children):
     global comment_count
     global comment_array
@@ -172,7 +172,7 @@ After appending the comment to the `comment_array`, we need to check if there
 are any replies to that comment. Since we will be doing this check many times,
 it's best that we write a helper function for it. We'll call it `get_replies`:
 
-```
+```python
 def get_replies(comment):
     global comment_count
     if comment['replies'] != "":
@@ -195,7 +195,7 @@ do this, we will use a built-in Python function called
 [`input`](https://docs.python.org/3/library/functions.html#input) which will
 allow the user to enter a URL to a reddit post.
 
-```
+```python
 # get url from user
 print('enter the reddit post url (e.g. https://www.reddit.com/r/redditdev/comments/krolrb/multicomments/):')
 thread_url = input()
@@ -211,7 +211,7 @@ To get the post data, we need to turn
 
 To do that, we can write a small helper function.
 
-```
+```python
 def sanitize_input(url):
     last_char = url[-1]
     if last_char == '/':
@@ -225,7 +225,7 @@ last character of `url` is a `/` and removes it if it is. Then the function
 appends `.json` to the end of `url`. After we pass the user's inputted URL to
 this function, we're ready to fetch the post data.
 
-```
+```python
 # pass user's url to sanitize helper
 sanitized_thread_url = sanitize_input(thread_url)
 
@@ -274,7 +274,7 @@ is appended to the end. So
 `https://www.reddit.com/r/redditdev/comments/krolrb/multicomments/{comment_id}.json`.
 We can write a simple helper function to do this for us.
 
-```
+```python
 def create_thread_url(comment_id):
     return sanitized_thread_url.replace('.json', f'/{comment_id}.json')
 ```
@@ -284,7 +284,7 @@ We simply pass the `comment_id` as an argument and then do a string replace on
 
 We're then ready to make the requests for the additional comments.
 
-```
+```python
 # handle extra comment ids
 for id in more_comment_ids:
     req_data = requests.get(create_thread_url(
@@ -318,7 +318,7 @@ in our global `comment_array` variable into a single string. We will then write
 a function which will parse that string and keep track of how many times each
 word appears. The function to do that looks like this:
 
-```
+```python
 def analyze_words(words):
     analysis_string = words.split(' ')
     word_dict = {}
@@ -350,7 +350,7 @@ word, we will return the `word_dict` we created.
 
 The end of the script looks as follows:
 
-```
+```python
 comment_string = ' '.join(comment_array)
 results = analyze_words(comment_string)
 

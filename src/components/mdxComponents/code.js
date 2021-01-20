@@ -3,13 +3,13 @@ import Highlight, { defaultProps } from "prism-react-renderer"
 import vsDark from "prism-react-renderer/themes/vsDark"
 import { Line, LineContent, LineNumber } from "./lines"
 
-export default ({ children }) => {
+export default ({ codeString, language /* metastring */ }) => {
   return (
     <Highlight
       {...defaultProps}
-      code={children}
+      code={codeString}
       theme={vsDark}
-      language="javascript"
+      language={language}
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre

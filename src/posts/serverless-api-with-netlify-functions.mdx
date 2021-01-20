@@ -105,7 +105,7 @@ The other thing to note in the `package.json` file are the two scripts. We have
 `"start": "nodemon server-local.js"` which is used for development, and
 `"build": "netlify-lambda build express"` which is used to build and deploy.
 
-```
+```javascript
   "scripts": {
     "build": "netlify-lambda build express",
     "start": "nodemon server-local.js"
@@ -126,12 +126,12 @@ Netlify's web app, or within our application code, we can specify the designated
 folder with a `netlify.toml` configuration file. In our case, we'll use a
 configuration file that lives in our root directory that looks like this:
 
-```
+```javascript
 // netlify.toml
 
-[build]
-  command = "npm install && npm run build"
-  functions = "functions"
+;[build]
+command = "npm install && npm run build"
+functions = "functions"
 ```
 
 With our scripts and build configuration accounted for, let's take a look at the
@@ -187,7 +187,7 @@ As we specified in our `netlify.toml` configuration file, our function code is
 going to live at `./netlify/functions/server`. So we will tell our express app
 on line 9 to use our `router` object anytime a request is sent to this server.
 
-```
+```javascript
 app.use("/.netlify/functions/server", router)
 ```
 
@@ -196,7 +196,7 @@ Lastly, on line 29, we will utilize the
 wrap our application up for serverless use. This means our application can work
 as expected without any HTTP server, ports, or sockets.
 
-```
+```javascript
 module.exports.handler = serverless(app)
 ```
 
