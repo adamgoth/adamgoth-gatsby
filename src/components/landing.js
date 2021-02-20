@@ -103,14 +103,14 @@ export default () => {
             >
               <Img fixed={data.twitter.childImageSharp.fixed} />
             </a>
-            <a
+            {/* <a
               className="Landing-icon"
               href="https://www.instagram.com/adampeter"
               rel="noopener noreferrer"
               target="_blank"
             >
               <Img fixed={data.instagram.childImageSharp.fixed} />
-            </a>
+            </a> */}
             <a
               className="Landing-icon"
               href="mailto://hello@adamgoth.com"
