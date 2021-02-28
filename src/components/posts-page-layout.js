@@ -25,7 +25,11 @@ export default function PageTemplate({ data: { mdx } }) {
       <Layout>
         <div style={{ padding: "0 1rem" }}>
           <h1>{mdx.frontmatter.title}</h1>
-          <h4 className="template__post-info">{`${mdx.frontmatter.date} by ${mdx.frontmatter.author}`}</h4>
+          <h4 className="template__post-info">
+            {`${mdx.frontmatter.date} by ${mdx.frontmatter.author}`}{" "}
+            <span style={{ padding: "0 0.3rem" }}>·</span> {mdx.timeToRead} min
+            read
+          </h4>
           <MDXProvider components={components}>
             <MDXRenderer>{mdx.body}</MDXRenderer>
           </MDXProvider>
@@ -50,6 +54,7 @@ export const pageQuery = graphql`
         preview
         keywords
       }
+      timeToRead
     }
   }
 `
