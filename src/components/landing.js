@@ -81,7 +81,7 @@ export default () => {
             </a>
             <a
               className="Landing-icon"
-              href="https://www.linkedin.com/in/adam-goth-8a300163/"
+              href="https://www.linkedin.com/in/adamgoth/"
               rel="noopener noreferrer"
               target="_blank"
             >
